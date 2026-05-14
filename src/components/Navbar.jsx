@@ -1,8 +1,18 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { auth } from "../firebase";
+import { signOut } from "firebase/auth";
 
-export default function Navbar() {
+export default function Navbar({ user }) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <nav className="bg-[#302D21] text-white w-full sticky top-0 z-50 shadow-md">
@@ -28,14 +38,25 @@ export default function Navbar() {
           <Link to="/contact" className="hover:text-[#E6C7A8] transition">Contact</Link>
         </div>
 
-        {/* RIGHT: LOGIN BUTTON */}
+        {/* RIGHT: AUTH BUTTON */}
         <div className="flex justify-end">
-          <Link
-            to="/login"
-            className="text-sm border border-white/30 px-4 py-1 rounded-full hover:bg-white hover:text-[#302D21] transition"
-          >
-            Login / Sign Up
-          </Link>
+
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="text-sm border border-white/30 px-4 py-1 rounded-full hover:bg-white hover:text-[#302D21] transition"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="text-sm border border-white/30 px-4 py-1 rounded-full hover:bg-white hover:text-[#302D21] transition"
+            >
+              Login / Sign Up
+            </Link>
+          )}
+
         </div>
 
       </div>
@@ -69,12 +90,21 @@ export default function Navbar() {
           <Link to="/services" className="block">Services</Link>
           <Link to="/contact" className="block">Contact</Link>
 
-          <Link
-            to="/login"
-            className="block mt-2 border border-white/30 px-3 py-1 rounded-full w-fit"
-          >
-            Login / Sign Up
-          </Link>
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="block mt-2 border border-white/30 px-3 py-1 rounded-full w-fit"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="block mt-2 border border-white/30 px-3 py-1 rounded-full w-fit"
+            >
+              Login / Sign Up
+            </Link>
+          )}
         </div>
       )}
     </nav>
