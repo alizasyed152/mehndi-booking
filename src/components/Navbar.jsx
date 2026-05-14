@@ -25,6 +25,7 @@ export default function Navbar({ user }) {
           <h1 className="text-lg md:text-xl font-semibold tracking-wide">
             Aliza&apos;s Mehndi Designs
           </h1>
+
           <span className="text-xs text-white/70 italic">
             Beautiful henna designs for all occasions
           </span>
@@ -32,10 +33,44 @@ export default function Navbar({ user }) {
 
         {/* CENTER: NAV LINKS */}
         <div className="hidden md:flex space-x-10 text-sm font-medium">
-          <Link to="/" className="hover:text-[#E6C7A8] transition">Home</Link>
-          <Link to="/about" className="hover:text-[#E6C7A8] transition">About</Link>
-          <Link to="/services" className="hover:text-[#E6C7A8] transition">Services</Link>
-          <Link to="/contact" className="hover:text-[#E6C7A8] transition">Contact</Link>
+
+          <Link
+            to="/"
+            className="hover:text-[#E6C7A8] transition"
+          >
+            Home
+          </Link>
+
+          <Link
+            to="/about"
+            className="hover:text-[#E6C7A8] transition"
+          >
+            About
+          </Link>
+
+          <Link
+            to="/services"
+            className="hover:text-[#E6C7A8] transition"
+          >
+            Services
+          </Link>
+
+          {user && (
+            <Link
+              to="/dashboard"
+              className="hover:text-[#E6C7A8] transition"
+            >
+              Dashboard
+            </Link>
+          )}
+
+          <Link
+            to="/contact"
+            className="hover:text-[#E6C7A8] transition"
+          >
+            Contact
+          </Link>
+
         </div>
 
         {/* RIGHT: AUTH BUTTON */}
@@ -63,10 +98,12 @@ export default function Navbar({ user }) {
 
       {/* MOBILE TOP ROW */}
       <div className="md:hidden flex justify-between items-center px-6 pb-3">
+
         <div className="flex flex-col leading-tight">
           <h1 className="text-sm font-semibold">
             Aliza&apos;s Mehndi Designs
           </h1>
+
           <span className="text-[10px] text-white/70 italic">
             Beautiful henna designs for all occasions
           </span>
@@ -80,15 +117,34 @@ export default function Navbar({ user }) {
           <span className="w-6 h-0.5 bg-white"></span>
           <span className="w-6 h-0.5 bg-white"></span>
         </button>
+
       </div>
 
       {/* MOBILE MENU */}
       {isOpen && (
         <div className="md:hidden px-6 pb-4 space-y-3 text-sm">
-          <Link to="/" className="block">Home</Link>
-          <Link to="/about" className="block">About</Link>
-          <Link to="/services" className="block">Services</Link>
-          <Link to="/contact" className="block">Contact</Link>
+
+          <Link to="/" className="block">
+            Home
+          </Link>
+
+          <Link to="/about" className="block">
+            About
+          </Link>
+
+          <Link to="/services" className="block">
+            Services
+          </Link>
+
+          {user && (
+            <Link to="/dashboard" className="block">
+              Dashboard
+            </Link>
+          )}
+
+          <Link to="/contact" className="block">
+            Contact
+          </Link>
 
           {user ? (
             <button
@@ -105,8 +161,10 @@ export default function Navbar({ user }) {
               Login / Sign Up
             </Link>
           )}
+
         </div>
       )}
+
     </nav>
   );
 }
