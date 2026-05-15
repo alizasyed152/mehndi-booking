@@ -1,10 +1,23 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 
 export default function Navbar({ user }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -14,43 +27,191 @@ export default function Navbar({ user }) {
     }
   };
 
+  const navLinkStyles = (path) =>
+    `relative transition duration-300 hover:text-[#E6C7A8] ${
+      location.pathname === path
+        ? "text-[#E6C7A8]"
+        : "text-white"
+    }`;
+
   return (
-    <nav className="bg-[#302D21] text-white w-full sticky top-0 z-50 shadow-md">
+    <nav
+      className={`sticky top-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-[#302D21]/90 backdrop-blur-xl shadow-2xl border-b border-white/10"
+          : "bg-[#302D21]"
+      }`}
+    >
 
       {/* MAIN NAV */}
-      <div className="w-full px-10 py-5 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 md:px-10">
 
-        {/* LEFT: BRAND */}
-        <div className="flex flex-col leading-tight">
-          <h1 className="text-lg md:text-xl font-semibold tracking-wide">
-            Aliza&apos;s Mehndi Designs
-          </h1>
+        <div
+          className={`flex items-center justify-between transition-all duration-500 ${
+            scrolled ? "py-4" : "py-6"
+          }`}
+        >
 
-          <span className="text-xs text-white/70 italic">
-            Beautiful henna designs for all occasions
-          </span>
+          {/* LEFT BRAND */}
+          <Link
+            to="/"
+            className="flex flex-col leading-tight group"
+          >
+
+            <h1 className="text-xl md:text-2xl font-semibold tracking-wide text-white group-hover:text-[#E6C7A8] transition duration-300">
+              Aliza&apos;s Mehndi
+            </h1>
+
+            <span className="text-xs text-white/60 italic tracking-wide">
+              Luxury Henna Artistry
+            </span>
+
+          </Link>
+
+          {/* CENTER NAV */}
+          <div className="hidden md:flex items-center gap-10 text-sm font-medium">
+
+            <Link
+              to="/"
+              className={navLinkStyles("/")}
+            >
+              Home
+
+              {location.pathname === "/" && (
+                <span className="absolute left-0 -bottom-2 w-full h-[2px] bg-[#E6C7A8] rounded-full"></span>
+              )}
+            </Link>
+
+            <Link
+              to="/about"
+              className={navLinkStyles("/about")}
+            >
+              About
+
+              {location.pathname === "/about" && (
+                <span className="absolute left-0 -bottom-2 w-full h-[2px] bg-[#E6C7A8] rounded-full"></span>
+              )}
+            </Link>
+
+            <Link
+              to="/services"
+              className={navLinkStyles("/services")}
+            >
+              Services
+
+              {location.pathname === "/services" && (
+                <span className="absolute left-0 -bottom-2 w-full h-[2px] bg-[#E6C7A8] rounded-full"></span>
+              )}
+            </Link>
+
+            {user && (
+              <Link
+                to="/dashboard"
+                className={navLinkStyles("/dashboard")}
+              >
+                Dashboard
+
+                {location.pathname === "/dashboard" && (
+                  <span className="absolute left-0 -bottom-2 w-full h-[2px] bg-[#E6C7A8] rounded-full"></span>
+                )}
+              </Link>
+            )}
+
+            <Link
+              to="/contact"
+              className={navLinkStyles("/contact")}
+            >
+              Contact
+
+              {location.pathname === "/contact" && (
+                <span className="absolute left-0 -bottom-2 w-full h-[2px] bg-[#E6C7A8] rounded-full"></span>
+              )}
+            </Link>
+
+          </div>
+
+          {/* RIGHT BUTTONS */}
+          <div className="hidden md:flex items-center gap-4">
+
+            <Link
+              to="/booking"
+              className="bg-[#E6C7A8] text-[#302D21] px-5 py-2 rounded-full text-sm font-medium hover:scale-105 transition duration-300 shadow-md"
+            >
+              Book Now
+            </Link>
+
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="text-sm border border-white/20 px-5 py-2 rounded-full hover:bg-white hover:text-[#302D21] transition duration-300"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="text-sm border border-white/20 px-5 py-2 rounded-full hover:bg-white hover:text-[#302D21] transition duration-300"
+              >
+                Login
+              </Link>
+            )}
+
+          </div>
+
+          {/* MOBILE BUTTON */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden flex flex-col justify-center gap-1.5"
+          >
+
+            <span
+              className={`w-6 h-0.5 bg-white transition ${
+                isOpen ? "rotate-45 translate-y-2" : ""
+              }`}
+            ></span>
+
+            <span
+              className={`w-6 h-0.5 bg-white transition ${
+                isOpen ? "opacity-0" : ""
+              }`}
+            ></span>
+
+            <span
+              className={`w-6 h-0.5 bg-white transition ${
+                isOpen ? "-rotate-45 -translate-y-2" : ""
+              }`}
+            ></span>
+
+          </button>
+
         </div>
 
-        {/* CENTER: NAV LINKS */}
-        <div className="hidden md:flex space-x-10 text-sm font-medium">
+      </div>
+
+      {/* MOBILE MENU */}
+      {isOpen && (
+        <div className="md:hidden bg-[#302D21]/95 backdrop-blur-xl border-t border-white/10 px-6 py-6 space-y-5 text-sm font-medium animate-fadeIn">
 
           <Link
             to="/"
-            className="hover:text-[#E6C7A8] transition"
+            className="block text-white hover:text-[#E6C7A8]"
+            onClick={() => setIsOpen(false)}
           >
             Home
           </Link>
 
           <Link
             to="/about"
-            className="hover:text-[#E6C7A8] transition"
+            className="block text-white hover:text-[#E6C7A8]"
+            onClick={() => setIsOpen(false)}
           >
             About
           </Link>
 
           <Link
             to="/services"
-            className="hover:text-[#E6C7A8] transition"
+            className="block text-white hover:text-[#E6C7A8]"
+            onClick={() => setIsOpen(false)}
           >
             Services
           </Link>
@@ -58,7 +219,8 @@ export default function Navbar({ user }) {
           {user && (
             <Link
               to="/dashboard"
-              className="hover:text-[#E6C7A8] transition"
+              className="block text-white hover:text-[#E6C7A8]"
+              onClick={() => setIsOpen(false)}
             >
               Dashboard
             </Link>
@@ -66,99 +228,34 @@ export default function Navbar({ user }) {
 
           <Link
             to="/contact"
-            className="hover:text-[#E6C7A8] transition"
+            className="block text-white hover:text-[#E6C7A8]"
+            onClick={() => setIsOpen(false)}
           >
             Contact
           </Link>
 
-        </div>
-
-        {/* RIGHT: AUTH BUTTON */}
-        <div className="flex justify-end">
+          <Link
+            to="/booking"
+            className="block w-fit bg-[#E6C7A8] text-[#302D21] px-5 py-2 rounded-full"
+            onClick={() => setIsOpen(false)}
+          >
+            Book Now
+          </Link>
 
           {user ? (
             <button
               onClick={handleLogout}
-              className="text-sm border border-white/30 px-4 py-1 rounded-full hover:bg-white hover:text-[#302D21] transition"
+              className="block border border-white/20 px-5 py-2 rounded-full text-white"
             >
               Logout
             </button>
           ) : (
             <Link
               to="/login"
-              className="text-sm border border-white/30 px-4 py-1 rounded-full hover:bg-white hover:text-[#302D21] transition"
+              className="block w-fit border border-white/20 px-5 py-2 rounded-full text-white"
+              onClick={() => setIsOpen(false)}
             >
-              Login / Sign Up
-            </Link>
-          )}
-
-        </div>
-
-      </div>
-
-      {/* MOBILE TOP ROW */}
-      <div className="md:hidden flex justify-between items-center px-6 pb-3">
-
-        <div className="flex flex-col leading-tight">
-          <h1 className="text-sm font-semibold">
-            Aliza&apos;s Mehndi Designs
-          </h1>
-
-          <span className="text-[10px] text-white/70 italic">
-            Beautiful henna designs for all occasions
-          </span>
-        </div>
-
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex flex-col space-y-1"
-        >
-          <span className="w-6 h-0.5 bg-white"></span>
-          <span className="w-6 h-0.5 bg-white"></span>
-          <span className="w-6 h-0.5 bg-white"></span>
-        </button>
-
-      </div>
-
-      {/* MOBILE MENU */}
-      {isOpen && (
-        <div className="md:hidden px-6 pb-4 space-y-3 text-sm">
-
-          <Link to="/" className="block">
-            Home
-          </Link>
-
-          <Link to="/about" className="block">
-            About
-          </Link>
-
-          <Link to="/services" className="block">
-            Services
-          </Link>
-
-          {user && (
-            <Link to="/dashboard" className="block">
-              Dashboard
-            </Link>
-          )}
-
-          <Link to="/contact" className="block">
-            Contact
-          </Link>
-
-          {user ? (
-            <button
-              onClick={handleLogout}
-              className="block mt-2 border border-white/30 px-3 py-1 rounded-full w-fit"
-            >
-              Logout
-            </button>
-          ) : (
-            <Link
-              to="/login"
-              className="block mt-2 border border-white/30 px-3 py-1 rounded-full w-fit"
-            >
-              Login / Sign Up
+              Login
             </Link>
           )}
 
